@@ -1,0 +1,26 @@
+<h1>{{ title }} <span>{{getTodoCount()}}</span></h1>
+
+<div id='todoList' *ngIf="! selected">
+  <table>
+    <thead>
+      <tr>
+        <th>Task</th>
+        <th>Completed</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let todo of todos">
+        <td (click)="displayTodo(todo)">{{ todo.task }}</td>
+        <td>{{ todo.completed }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div id='todoDetails' *ngIf="selected">
+  <h4>{{selected.id}}</h4>
+  <h3>{{selected.task}}</h3>
+  <p>{{selected.description}}</p>
+  <p>Completed: {{selected.completed}}</p>
+  <button (click)="displayTable()">Back</button>
+</div>

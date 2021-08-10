@@ -17,6 +17,8 @@ export class TodoListComponent implements OnInit {
   ];
 
   selected: Todo | null = null;
+  newTodo: Todo | null = new Todo();
+  editTodo: Todo | null = null;
 
   constructor() { }
 
@@ -35,4 +37,31 @@ export class TodoListComponent implements OnInit {
     this.selected = null;
   }
 
+  addTodo(todo: Todo) {
+    todo.id = this.generateId();
+    todo.completed = false;
+    todo.description = '';
+    this.todos.push(todo);
+    this.newTodo = new Todo();
+  }
+
+  generateId(): number {
+    return this.todos[this.todos.length - 1].id + 1;
+  }
+
+  setEditTodo(): void {
+    this.editTodo = Object.assign({}, this.selected);
+  }
+
+  updateTodo(todo: Todo): void {
+    for (const existingTodo of this.todos) {
+      if (existingTodo.id === todo.id) {
+        existingTodo.task = todo.task;
+        existingTodo.description = todo.description;
+        existingTodo.completed = todo.completed;
+        break;
+      }
+    }
+    this.editTodo = null;
+  }
 }

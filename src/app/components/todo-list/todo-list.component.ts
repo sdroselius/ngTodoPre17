@@ -5,10 +5,9 @@ import { Todo } from 'src/app/models/todo';
 @Component({
   selector: 'app-todo-list',
   templateUrl: './todo-list.component.html',
-  styleUrls: ['./todo-list.component.css']
+  styleUrls: ['./todo-list.component.css'],
 })
 export class TodoListComponent implements OnInit {
-
   title = 'ngTodo';
 
   todos: Todo[] = [];
@@ -17,14 +16,24 @@ export class TodoListComponent implements OnInit {
   newTodo: Todo | null = new Todo();
   editTodo: Todo | null = null;
 
-  constructor(
-    private todoService: TodoService
-  ) { }
+  constructor(private todoService: TodoService) {}
 
   ngOnInit(): void {
-    this.todos = this.todoService.index();
+    // this.todos = this.todoService.index();
+    this.reload();
   }
 
+  reload() {
+    this.todoService.index().subscribe(
+      (todos) => {
+        this.todos = todos;
+      },
+      (err) => {
+        console.error('TodoListComponent.reload(): error retrieving todos');
+        console.error(err);
+      }
+    );
+  }
   getTodoCount(): number {
     return this.todos.length;
   }
@@ -38,9 +47,16 @@ export class TodoListComponent implements OnInit {
   }
 
   addTodo(todo: Todo) {
-    this.todoService.create(todo);
-    this.todos = this.todoService.index();
-    this.newTodo = new Todo();
+    this.todoService.create(todo).subscribe(
+      (todo) => {
+        this.reload();
+        this.newTodo = new Todo();
+      },
+      (err) => {
+        console.error('TodoListComponent.addTodo(): error adding todo');
+        console.error(err);
+      }
+    );
   }
 
   setEditTodo(): void {
@@ -48,13 +64,28 @@ export class TodoListComponent implements OnInit {
   }
 
   updateTodo(todo: Todo): void {
-    this.todoService.update(todo)
-    this.todos = this.todoService.index();
-    this.editTodo = null;
+    this.todoService.update(todo).subscribe(
+      (todo) => {
+        this.reload();
+        this.editTodo = null;
+        this.selected = todo;
+      },
+      (bad) => {
+        console.error('TodoListComponent.updateTodo(): error updating todo');
+        console.error(bad);
+      }
+    );
   }
 
   deleteTodo(id: number): void {
-    this.todoService.destroy(id);
-    this.todos = this.todoService.index();
+    this.todoService.destroy(id).subscribe(
+      (good) => {
+        this.reload();
+      },
+      (bad) => {
+        console.error('TodoListComponent.deleteTodo(): error deleting todo');
+        console.error(bad);
+      }
+    );
   }
 }

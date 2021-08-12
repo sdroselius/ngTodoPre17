@@ -1,3 +1,4 @@
+import { IncompletePipe } from './../../pipes/incomplete.pipe';
 import { TodoService } from './../../services/todo.service';
 import { Component, OnInit } from '@angular/core';
 import { Todo } from 'src/app/models/todo';
@@ -15,8 +16,12 @@ export class TodoListComponent implements OnInit {
   selected: Todo | null = null;
   newTodo: Todo | null = new Todo();
   editTodo: Todo | null = null;
+  showComplete: boolean = false;
 
-  constructor(private todoService: TodoService) {}
+  constructor(
+    private todoService: TodoService,
+    private incompletePipe: IncompletePipe
+  ) {}
 
   ngOnInit(): void {
     // this.todos = this.todoService.index();
@@ -35,7 +40,7 @@ export class TodoListComponent implements OnInit {
     );
   }
   getTodoCount(): number {
-    return this.todos.length;
+    return this.incompletePipe.transform(this.todos, false).length;
   }
 
   displayTodo(todo: Todo): void {
@@ -63,12 +68,14 @@ export class TodoListComponent implements OnInit {
     this.editTodo = Object.assign({}, this.selected);
   }
 
-  updateTodo(todo: Todo): void {
+  updateTodo(todo: Todo, setSelected = true): void {
     this.todoService.update(todo).subscribe(
       (todo) => {
         this.reload();
         this.editTodo = null;
-        this.selected = todo;
+        if (setSelected) {
+          this.selected = todo;
+        }
       },
       (bad) => {
         console.error('TodoListComponent.updateTodo(): error updating todo');

@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Todo } from '../models/todo';
 import { Observable, throwError } from 'rxjs';
+import { DatePipe } from '@angular/common';
 
 @Injectable({
   providedIn: 'root',
@@ -11,7 +12,9 @@ export class TodoService {
   private baseUrl = 'http://localhost:8084/';
   private url = this.baseUrl + 'api/todos';
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private datePipe: DatePipe) {}
 
   index(): Observable<Todo[]> {
     return this.http.get<Todo[]>(this.url).pipe(
@@ -39,6 +42,12 @@ export class TodoService {
   }
 
   update(todo: Todo): Observable<Todo> {
+    if (todo.completed) {
+      todo.completeDate = this.datePipe.transform(Date.now(), 'shortDate');
+    }
+    else {
+      todo.completeDate = '';
+    }
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/json',

@@ -25,6 +25,15 @@ export class TodoService {
     );
   }
 
+  show(todoId: any): Observable<Todo> {
+    return this.http.get<Todo>(`${this.url}/${todoId}`).pipe(
+      catchError((err: any) => {
+        console.error('TodoService.show(): error retrieving todo id ' + todoId);
+        return throwError(err);
+      })
+    );
+  }
+
   create(todo: Todo): Observable<Todo> {
     todo.completed = false;
     todo.description = '';

@@ -1,6 +1,4 @@
-<h1>
-  {{ title }} <span class="badge" [ngClass]="getTodoCount() >= 10?'bg-danger': getTodoCount() >= 5 ? 'bg-warning':'bg-success'">{{ getTodoCount() }}</span>
-</h1>
+<h1>{{ title }} <span class="badge" [ngClass]="getTodoCount() >= 10?'bg-danger': getTodoCount() >= 5 ? 'bg-warning':'bg-success'">{{ getTodoCount() }}</span></h1>
 
 <div id="todoList" *ngIf="!selected">
   <div class="form-group">

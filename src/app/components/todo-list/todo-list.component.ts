@@ -2,6 +2,7 @@ import { IncompletePipe } from './../../pipes/incomplete.pipe';
 import { TodoService } from './../../services/todo.service';
 import { Component, OnInit } from '@angular/core';
 import { Todo } from 'src/app/models/todo';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-todo-list',
@@ -20,11 +21,25 @@ export class TodoListComponent implements OnInit {
 
   constructor(
     private todoService: TodoService,
-    private incompletePipe: IncompletePipe
+    private incompletePipe: IncompletePipe,
+    private currentRoute: ActivatedRoute,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
-    // this.todos = this.todoService.index();
+    let idString = this.currentRoute.snapshot.paramMap.get('id');
+
+    if (!this.selected && idString) {
+      this.todoService.show(idString).subscribe(
+        todo => {
+          this.selected = todo;
+        },
+        fail => {
+          console.error('Invalid todo ID ' + idString);
+          this.router.navigateByUrl('notFound');
+        }
+      );
+    }
     this.reload();
   }
 
